@@ -5,7 +5,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 include '../koneksi.php';
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,7 +30,11 @@ include '../koneksi.php';
     <!-- Custom styles for this page -->
     <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
 
+    <!-- reelicon -->
     <link rel="shortcut icon" href="../images/reelicon.png" type="image/x-icon" />
+
+    <!-- alert library -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body id="page-top">
@@ -173,8 +176,257 @@ include '../koneksi.php';
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Layanan Publik</h1>
                     </div>
+                    <!-- table -->
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="text-right py-2">
+                                <a href="#" class="add-btn"><button class="btn btn-primary text-align-end">Tambah
+                                        Baru</button></a>
+                            </div>
+                            <div class="table-responsive">
+                                <table id="dataTable" class="table table-bordered table-hover text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Layanan</th>
+                                            <th>Jenis Layanan</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php $hasil = "select * from layanan";
+                                        $no = 1;
+                                        foreach ($conn->query($hasil) as $row)
+                                        : ?>
+                                            <tr>
+                                                <td><?php echo $no++; ?></td>
+                                                <td><?php echo $row['nama']; ?>
+                                                </td>
+                                                <td><?php echo $row['jenis']; ?></td>
+                                                <td>
+                                                    <a href="#" class="edit-btn" data-id="<?php echo $row['id']; ?>"
+                                                        data-nama="<?php echo $row['nama']; ?>"
+                                                        data-jenis="<?php echo $row['jenis']; ?>">
+                                                        <li class="fa fa-solid fa-pen"></li>
+                                                        <span>edit</span>
+                                                    </a> |
+                                                    <a href="#" class="delete-link" data-id="<?php echo $row['id']; ?>">
+                                                        <li class="fa fa-solid fa-trash"></li><span>Hapus</span>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end table -->
 
+                    <!-- add Modal -->
+                    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addModalLabel">Tambah Data</h5>
+                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">x</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addForm" action="" method="POST">
+                                        <input type="hidden" name="id" id="add-id">
+                                        <div class="form-group">
+                                            <label for="add-nama">Layanan</label>
+                                            <input type="text" class="form-control" id="add-nama" name="nama" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="add-jenis">Jenis</label>
+                                            <input type="text" class="form-control" id="add-jenis" name="jenis"
+                                                required>
+                                        </div>
+                                        <div class="text-center py-4">
+                                            <button type="submit" class="btn btn-primary text-align-end"
+                                                name="tambah">Tambah</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of Update Modal -->
 
+                    <!-- Update Modal -->
+                    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog"
+                        aria-labelledby="updateModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="updateModalLabel">Update Data</h5>
+                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">x</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="updateForm" action="" method="POST">
+                                        <input type="hidden" name="id" id="update-id">
+                                        <div class="form-group">
+                                            <label for="update-nama">Layanan</label>
+                                            <input type="text" class="form-control" id="update-nama" name="nama"
+                                                required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="update-jenis">Jenis</label>
+                                            <input type="text" class="form-control" id="update-jenis" name="jenis"
+                                                required>
+                                        </div>
+                                        <div class="text-center py-4">
+                                            <button type="submit" class="btn btn-primary text-align-end">Update</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of Update Modal -->
+
+                    <?php
+                    //handle to add
+                    if (isset($_POST['tambah'])) {
+                        $nama = $_POST['nama'];
+                        $jenis = $_POST['jenis'];
+
+                        $sql = "INSERT INTO layanan (nama, jenis) VALUES (?, ?)";
+                        $stmt = $conn->prepare($sql);
+
+                        if ($stmt) {
+                            $stmt->bind_param("ss", $nama, $jenis);
+
+                            if ($stmt->execute()) {
+                                echo "<script>
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: 'Data berhasil ditambahkan.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = 'layanan.php';
+                                }
+                            });
+                        </script>";
+                            } else {
+                                echo "<script>
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: 'Data gagal ditambahkan.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        </script>";
+                            }
+                        } else {
+                            echo "<script>
+                        Swal.fire({
+                            title: 'Gagal!',
+                            text: 'Gagal mempersiapkan statement.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    </script>";
+                        }
+                    }
+                    //handle to update
+                    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                        $id = $_POST['id'];
+                        $nama = $_POST['nama'];
+                        $jenis = $_POST['jenis'];
+
+                        $sql = "UPDATE layanan SET nama = ?, jenis = ? WHERE id = ?";
+                        $stmt = $conn->prepare($sql);
+
+                        if ($stmt) {
+                            $stmt->bind_param("ssi", $nama, $jenis, $id);
+                            if ($stmt->execute()) {
+                                echo "<script>
+                                    Swal.fire({
+                                        title: 'Berhasil!',
+                                        text: 'Data berhasil diupdate.',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = 'layanan.php';
+                                        }
+                                    });
+                                  </script>";
+                            } else {
+                                echo "<script>
+                                    Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Data gagal diupdate.',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                  </script>";
+                            }
+                        } else {
+                            echo "<script>
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: 'Gagal mempersiapkan statement.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        </script>";
+                        }
+                    }
+                    // handle to delete
+                    if (isset($_GET['delete_id'])) {
+                        $id = $_GET['delete_id'];
+
+                        $sql = "DELETE FROM layanan WHERE id = ?";
+                        $stmt = $conn->prepare($sql);
+
+                        if ($stmt) {
+                            $stmt->bind_param("i", $id);
+
+                            if ($stmt->execute()) {
+                                echo "<script>
+                                    Swal.fire({
+                                        title: 'Berhasil!',
+                                        text: 'Data berhasil dihapus.',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = 'layanan.php';
+                                        }
+                                    });
+                                </script>";
+                            } else {
+                                echo "<script>
+                                    Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Data gagal dihapus.',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                </script>";
+                            }
+                        } else {
+                            echo "<script>
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: 'Gagal mempersiapkan statement.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            </script>";
+                        }
+                    }
+                    ?>
                 </div>
             </div>
             <!-- End of Main Content -->
@@ -233,11 +485,55 @@ include '../koneksi.php';
     <script src="js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+    <script src="js/demo/datatables-demo.js"></script>
+
+    <!-- modal update -->
+    <script>
+        $(document).ready(function () {
+            $(".edit-btn").on("click", function () {
+                var id = $(this).data("id");
+                var nama = $(this).data("nama");
+                var jenis = $(this).data("jenis");
+
+                $("#update-id").val(id);
+                $("#update-nama").val(nama);
+                $("#update-jenis").val(jenis);
+
+                $("#updateModal").modal("show");
+            });
+            function bindAddButtons() {
+                $(".add-btn").on("click", function () {
+                    $("#addModal").modal("show");
+                });
+            }
+            bindAddButtons();
+        });
+        $(document).ready(function () {
+            $(".delete-link").on("click", function (event) {
+                event.preventDefault(); // Mencegah aksi default dari tautan
+                var id = $(this).data("id"); // Mengambil id dari atribut data-id
+
+                Swal.fire({
+                    title: "Apakah Anda yakin?",
+                    text: "Data akan dihapus permanen.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Ya, hapus!",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "?delete_id=" + id; // Mengarahkan ke URL dengan parameter delete_id
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
 
 </html>

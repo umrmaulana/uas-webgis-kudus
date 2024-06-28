@@ -254,6 +254,11 @@ include 'koneksi.php';
   <script src="js/custom.js"></script>
   <!-- data struktur -->
   <script src="js/data.php"></script>
+  <script>
+    chart.on('click', function (sender, args) {
+      return false; // untuk membatalkan event click
+    });
+  </script>
 </body>
 
 </html>

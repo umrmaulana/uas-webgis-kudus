@@ -5,8 +5,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $tlp = $_POST['tlp'];
     $pesan = $_POST['pesan'];
-    $stmt = $conn->prepare("INSERT INTO pesan (nama, email, tlp, pesan) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $nama, $email, $tlp, $pesan);
+    $created_at = date('Y-m-d H:i:s');
+    $stmt = $conn->prepare("INSERT INTO pesan (nama, email, tlp, pesan,created_at) VALUES (?, ?, ?, ?,?)");
+    $stmt->bind_param("sssss", $nama, $email, $tlp, $pesan, $created_at);
     $stmt->execute();
     $stmt->close();
 }

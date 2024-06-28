@@ -177,6 +177,7 @@ include '../koneksi.php';
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Sebaran Kasus HIV/AIDS Kudus</h1>
                     </div>
+                    <!-- table -->
                     <div class="card shadow">
                         <div class="card-body">
                             <div class="table-responsive">
@@ -204,7 +205,7 @@ include '../koneksi.php';
                                                         data-nama="<?php echo $row['nama_kec']; ?>"
                                                         data-jumlah="<?php echo $row['jumlah']; ?>">
                                                         <li class="fa fa-solid fa-pen"></li>
-                                                        <span>update</span>
+                                                        <span>edit</span>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -214,6 +215,7 @@ include '../koneksi.php';
                             </div>
                         </div>
                     </div>
+                    <!-- end table -->
                     <!-- End of Main Content -->
 
                     <!-- Update Modal -->

@@ -1,11 +1,9 @@
-<?php
-session_start();
+<?php session_start();
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
 include '../koneksi.php';
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,9 +30,56 @@ include '../koneksi.php';
     <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
 
     <link rel="shortcut icon" href="../images/reelicon.png" type="image/x-icon" />
+
+    <!-- alert library -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body id="page-top">
+    <?php if (isset($_GET['delete_id'])) {
+        // handle delete
+        $id = $_GET['delete_id'];
+
+        $sql = "DELETE FROM pesan WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+
+        if ($stmt) {
+            $stmt->bind_param("i", $id);
+
+            if ($stmt->execute()) {
+                echo "<script>
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: 'Data berhasil dihapus.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'pesan.php';
+                    }
+                });
+            </script>";
+            } else {
+                echo "<script>
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: 'Data gagal dihapus.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            </script>";
+            }
+        } else {
+            echo "<script>
+            Swal.fire({
+                title: 'Gagal!',
+                text: 'Gagal mempersiapkan statement.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        </script>";
+        }
+    } ?>
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
@@ -89,7 +134,7 @@ include '../koneksi.php';
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="layanan.php">Layanan Publik</a>
-                        <a class="collapse-item" href="mk_layanan.php">Maklumat Pelayanan</a>
+                        <a class="collapse-item" href="pesan.php">Maklumat Pelayanan</a>
                     </div>
                 </div>
             </li>
@@ -173,8 +218,33 @@ include '../koneksi.php';
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Pesan Dari Website</h1>
                     </div>
-
-
+                    <div class="row py-2">
+                        <?php $hasil = "select * from pesan";
+                        foreach ($conn->query($hasil) as $row):
+                            $date = new DateTime($row['created_at']);
+                            $formattedDate = $date->format('F j, Y, g:i a');
+                            ?>
+                            <div class="col-5 card p-2 m-2" style="heigth: 400px;">
+                                <div class="card-body">
+                                    <h6 class="card-title"><?php echo strtoupper($row['pesan']); ?></h6>
+                                    <p class="card-text text-sm-left">
+                                        <?php echo $formattedDate; ?>
+                                    </p>
+                                    <p class="card-subtitle mb-2 text-muted text-xl-left"><?php echo $row['pesan']; ?>.</p>
+                                    <p class="d-flex justify-content-between">
+                                        <a href="" class="card-link text-left"><?php echo $row['tlp']; ?></a>
+                                        <a href="" class="card-link text-right"><?php echo $row['email']; ?></a>
+                                    </p>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <a href="#" class="delete-link btn btn-primary col-12"
+                                        data-id="<?php echo $row['id']; ?>">
+                                        <li class="fa fa-solid fa-trash mx-2"></li><span>Hapus</span>
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endforeach ?>
+                    </div>
                 </div>
             </div>
             <!-- End of Main Content -->
@@ -232,12 +302,28 @@ include '../koneksi.php';
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".delete-link").on("click", function (event) {
+                event.preventDefault(); // Mencegah aksi default dari tautan
+                var id = $(this).data("id"); // Mengambil id dari atribut data-id
 
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+                Swal.fire({
+                    title: "Apakah Anda yakin?",
+                    text: "Data akan dihapus permanen.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Ya, hapus!",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "?delete_id=" + id; // Mengarahkan ke URL dengan parameter delete_id
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

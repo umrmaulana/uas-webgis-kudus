@@ -31,6 +31,9 @@ include '../koneksi.php';
     <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
 
     <link rel="shortcut icon" href="../images/reelicon.png" type="image/x-icon" />
+
+    <!-- alert library -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body id="page-top">
@@ -172,8 +175,311 @@ include '../koneksi.php';
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">User</h1>
                     </div>
+                    <!-- table -->
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="text-right py-2">
+                                <a href="#" class="add-btn"><button class="btn btn-primary text-align-end">Tambah
+                                        Baru</button></a>
+                            </div>
+                            <div class="table-responsive">
+                                <table id="dataTable" class="table table-bordered table-hover text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama</th>
+                                            <th>Email</th>
+                                            <th>Foto</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php $hasil = "select * from user";
+                                        $no = 1;
+                                        foreach ($conn->query($hasil) as $row)
+                                        : ?>
+                                            <tr>
+                                                <td><?php echo $no++; ?></td>
+                                                <td><?php echo $row['nama']; ?>
+                                                </td>
+                                                <td><?php echo $row['email']; ?></td>
+                                                <td><img src="<?php echo $row['foto']; ?>"
+                                                        class="img-profile rounded-circle" style="width:30px" alt="Foto">
+                                                </td>
+                                                <td>
+                                                    <a href="#" class="edit-btn m-3" data-id="<?php echo $row['id']; ?>"
+                                                        data-nama="<?php echo $row['nama']; ?>"
+                                                        data-email="<?php echo $row['email']; ?>"
+                                                        data-password="<?php echo $row['password']; ?>">
+                                                        <li class="fa fa-solid fa-pen"></li>
+                                                        <span>edit</span>
+                                                    </a> |
+                                                    <a href="#" class="delete-link m-3" data-id="<?php echo $row['id']; ?>">
+                                                        <li class="fa fa-solid fa-trash"></li><span>Hapus</span>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end table -->
 
+                    <!-- add Modal -->
+                    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addModalLabel">Tambah Data</h5>
+                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">x</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addForm" enctype="multipart/form-data" action="" method="POST">
+                                        <input type="hidden" name="id" id="add-id">
+                                        <div class="form-group">
+                                            <label for="add-nama">Nama</label>
+                                            <input type="text" class="form-control" id="add-nama" name="nama" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="add-email">Email</label>
+                                            <input type="email" class="form-control" id="add-email" name="email"
+                                                required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="add-password">Password</label>
+                                            <input type="password" class="form-control" id="add-password"
+                                                name="password" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="foto">Choose file</label>
+                                            <input type="file" class="form-control" id="foto" name="foto">
+                                        </div>
+                                        <div class="text-center py-4">
+                                            <button type="submit" class="btn btn-primary text-align-end"
+                                                name="tambah">Tambah</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of add Modal -->
 
+                    <!-- Update Modal -->
+                    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog"
+                        aria-labelledby="updateModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="updateModalLabel">Update Data</h5>
+                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">x</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="updateForm" enctype="multipart/form-data" action="" method="POST">
+                                        <input type="hidden" name="id" id="update-id">
+                                        <div class="form-group">
+                                            <label for="update-nama">Nama</label>
+                                            <input type="text" class="form-control" id="update-nama" name="nama"
+                                                required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="update-email">Email</label>
+                                            <input type="email" class="form-control" id="update-email" name="email"
+                                                required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="update-password">Password</label>
+                                            <input type="password" class="form-control" id="update-password"
+                                                name="password" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="foto">Choose file</label>
+                                            <input type="file" class="form-control" id="foto" name="foto">
+                                        </div>
+                                        <div class="text-center py-4">
+                                            <button type="submit" class="btn btn-primary text-align-end"
+                                                name="update">Update</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of Update Modal -->
+                    <?php
+                    if (isset($_POST['tambah'])) {
+                        $nama = $_POST['nama'];
+                        $email = $_POST['email'];
+                        $password = $_POST['password'];
+                        $foto = '';
+
+                        if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+                            $targetDir = "../images/profile/";
+                            $targetFile = $targetDir . basename($_FILES["foto"]["name"]);
+                            $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+
+                            $check = getimagesize($_FILES["foto"]["tmp_name"]);
+                            if ($check !== false && in_array($imageFileType, ["jpg", "jpeg", "png", "gif"]) && $_FILES["foto"]["size"] <= 500000) {
+                                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $targetFile)) {
+                                    $foto = $targetFile;
+                                } else {
+                                    echo "Sorry, there was an error uploading your file.";
+                                }
+                            } else {
+                                echo "Invalid file type or size.";
+                            }
+                        }
+
+                        $sql = "INSERT INTO user (nama, email, password, foto) VALUES (?, ?, ?, ?)";
+                        $stmt = $conn->prepare($sql);
+                        if ($stmt) {
+                            $stmt->bind_param('ssss', $nama, $email, $password, $foto);
+                            if ($stmt->execute()) {
+                                echo '<script>
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Success",
+                                    text: "Data berhasil ditambahkan."
+                                }).then(function() {
+                                    window.location = "user.php";
+                                });
+                            </script>';
+                            } else {
+                                echo '<script>
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "Data gagal ditambahkan."
+                                }).then(function() {
+                                    window.location = "user.php";
+                                });
+                            </script>';
+                            }
+                        } else {
+                            echo '<script>
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "Data gagal ditambahkan."
+                                }).then(function() {
+                                    window.location = "user.php";
+                                });
+                            </script>';
+                        }
+                    }
+
+                    if (isset($_POST['update'])) {
+                        $id = $_POST['id'];
+                        $nama = $_POST['nama'];
+                        $email = $_POST['email'];
+                        $password = $_POST['password'];
+                        $foto = '';
+
+                        if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+                            $targetDir = "../images/profile/";
+                            $targetFile = $targetDir . basename($_FILES["foto"]["name"]);
+                            $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+
+                            $check = getimagesize($_FILES["foto"]["tmp_name"]);
+                            if ($check !== false && in_array($imageFileType, ["jpg", "jpeg", "png", "gif"]) && $_FILES["foto"]["size"] <= 500000) {
+                                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $targetFile)) {
+                                    $foto = $targetFile;
+                                } else {
+                                    echo "Sorry, there was an error uploading your file.";
+                                }
+                            } else {
+                                echo "Invalid file type or size.";
+                            }
+                        }
+                        $sql = "UPDATE user SET nama = ?, email = ?, password = ?, foto = ? WHERE id = ?";
+                        $stmt = $conn->prepare($sql);
+                        if ($stmt) {
+                            $stmt->bind_param('ssssi', $nama, $email, $password, $foto, $id);
+                            if ($stmt->execute()) {
+                                echo '<script>
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Success",
+                                    text: "Data berhasil ditambahkan."
+                                }).then(function() {
+                                    window.location = "user.php";
+                                });
+                            </script>';
+                            } else {
+                                echo '<script>
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "Data gagal ditambahkan."
+                                }).then(function() {
+                                    window.location = "user.php";
+                                });
+                            </script>';
+                            }
+                        } else {
+                            echo '<script>
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error",
+                                    text: "Data gagal ditambahkan."
+                                }).then(function() {
+                                    window.location = "user.php";
+                                });
+                            </script>';
+                        }
+                    }
+                    // handle to delete
+                    if (isset($_GET['delete_id'])) {
+                        $id = $_GET['delete_id'];
+
+                        $sql = "DELETE FROM user WHERE id = ?";
+                        $stmt = $conn->prepare($sql);
+
+                        if ($stmt) {
+                            $stmt->bind_param("i", $id);
+
+                            if ($stmt->execute()) {
+                                echo "<script>
+                                    Swal.fire({
+                                        title: 'Berhasil!',
+                                        text: 'Data berhasil dihapus.',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = 'user.php';
+                                        }
+                                    });
+                                </script>";
+                            } else {
+                                echo "<script>
+                                    Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Data gagal dihapus.',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                </script>";
+                            }
+                        } else {
+                            echo "<script>
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: 'Gagal mempersiapkan statement.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            </script>";
+                        }
+                    }
+                    ?>
                 </div>
             </div>
             <!-- End of Main Content -->
@@ -232,11 +538,58 @@ include '../koneksi.php';
     <script src="js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+    <script src="js/demo/datatables-demo.js"></script>
+    <!-- modal update -->
+    <script>
+        $(document).ready(function () {
+            $(".edit-btn").on("click", function () {
+                var id = $(this).data("id");
+                var nama = $(this).data("nama");
+                var email = $(this).data("email");
+                var password = $(this).data("password");
+                var foto = $(this).data("foto");
+
+                $("#update-id").val(id);
+                $("#update-nama").val(nama);
+                $("#update-email").val(email);
+                $("#update-password").val(password);
+                $("#update-foto").val(foto);
+
+                $("#updateModal").modal("show");
+            });
+            function bindAddButtons() {
+                $(".add-btn").on("click", function () {
+                    $("#addModal").modal("show");
+                });
+            }
+            bindAddButtons();
+        });
+        $(document).ready(function () {
+            $(".delete-link").on("click", function (event) {
+                event.preventDefault(); // Mencegah aksi default dari tautan
+                var id = $(this).data("id"); // Mengambil id dari atribut data-id
+
+                Swal.fire({
+                    title: "Apakah Anda yakin?",
+                    text: "Data akan dihapus permanen.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Ya, hapus!",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "?delete_id=" + id; // Mengarahkan ke URL dengan parameter delete_id
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
 
 </html>

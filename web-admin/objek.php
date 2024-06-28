@@ -7,6 +7,7 @@ if (!isset($_SESSION['user_id'])) {
 include '../koneksi.php';
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,6 +29,9 @@ include '../koneksi.php';
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet" />
 
+    <!-- Custom styles for this page -->
+    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+
     <!-- reelicon -->
     <link rel="shortcut icon" href="../images/reelicon.png" type="image/x-icon" />
 
@@ -35,15 +39,16 @@ include '../koneksi.php';
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- maps -->
-    <script src="http://maps.googleapis.com/maps/api/js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&callback=myMap"></script>
+    <!-- <script src="http://maps.googleapis.com/maps/api/js"></script> -->
     <script>
         var map;
-        var myCenter = new google.maps.LatLng(-6.969152525720453, 110.61103788560642);
+        var myCenter = new google.maps.LatLng(-6.814798495147951, 110.84429711670246);
         var marker;
         var awal = 0;
         var mapProp = {
             center: myCenter,
-            zoom: 15,
+            zoom: 11,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         function initialize() {
@@ -59,9 +64,8 @@ include '../koneksi.php';
             });
         }
         function setLatLng(lokasi) {
-            $("#x").val(lokasi.lat());
-            $("#y").val(lokasi.lng());
-
+            $("#lat").val(lokasi.lat());
+            $("#lng").val(lokasi.lng());
         }
         function placeMarker(location) {
             marker = new google.maps.Marker({
@@ -73,7 +77,6 @@ include '../koneksi.php';
             marker.setPosition(location);
         }
     </script>
-
 </head>
 
 <body id="page-top" onload="initialize()">
@@ -199,7 +202,7 @@ include '../koneksi.php';
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Settings
                                 </a>
-                                <a class="dropdown-item" href="logout.php" data-toggle="modal"
+                                <a class="dropdown-item" href="login.php" data-toggle="modal"
                                     data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
@@ -218,6 +221,10 @@ include '../koneksi.php';
                     </div>
                     <div class="card shadow">
                         <div class="card-body">
+                            <div class="text-right py-2">
+                                <a href="#" class="add-btn"><button class="btn btn-primary text-align-end">Tambah
+                                        Baru</button></a>
+                            </div>
                             <div class="table-responsive">
                                 <table id="dataTable" class="table table-bordered table-hover">
                                     <thead class="text-center">
@@ -238,14 +245,14 @@ include '../koneksi.php';
                                         foreach ($conn->query($hasil) as $row)
                                         : ?>
                                             <tr>
-                                                <td><?php echo $no++; ?></td>
+                                                <td class="text-center"><?php echo $no++; ?></td>
                                                 <td><?php echo $row['nama']; ?>
                                                 </td>
                                                 <td><?php echo $row['kategori']; ?></td>
                                                 <td><?php echo $row['nmr_tlp']; ?></td>
                                                 <td><?php echo $row['alamat']; ?></td>
-                                                <td><?php echo $row['lat']; ?></td>
-                                                <td><?php echo $row['lng']; ?></td>
+                                                <td><?php echo substr($row['lat'], 0, 8) . "..."; ?></td>
+                                                <td><?php echo substr($row['lng'], 0, 8) . "..."; ?></td>
                                                 <td>
                                                     <a href="#" class="edit-btn" data-id="<?php echo $row['id']; ?>"
                                                         data-nama="<?php echo $row['nama']; ?>"
@@ -254,8 +261,12 @@ include '../koneksi.php';
                                                         data-alamat="<?php echo $row['alamat']; ?>"
                                                         data-lat="<?php echo $row['lat']; ?>"
                                                         data-lng="<?php echo $row['lng']; ?>">
-                                                        <li class=" fa fa-solid fa-pen"></li>
-                                                        <span>update</span>
+                                                        <li class="fa fa-solid fa-pen"></li>
+                                                        <span>Edit</span>
+                                                    </a> |
+                                                    <a href="?delete_id=<?php echo $row['id']; ?>"
+                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                                        <li class="fa fa-solid fa-trash"></li><span>Hapus</span>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -287,41 +298,39 @@ include '../koneksi.php';
                                 <input type="hidden" name="id" id="update-id">
                                 <div class="form-group">
                                     <label for="update-nama">Nama Objek</label>
-                                    <input type="text" class="form-control" id="update-nama" name="nama"
-                                        value="<?php echo $row['nama'] ?>" required>
+                                    <input type="text" class="form-control" id="update-nama" name="nama" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="update-kategori">Kategori</label>
-                                    <select class="form-control" id="update-kategori" name="kategori" value="<?php echo $row['kategori'] ?>"
-                                        required>
+                                    <select class="form-control" id="update-kategori" name="kategori" required>
                                         <option value="Rumah Sakit">Rumah Sakit</option>
                                         <option value="Klinik">Klinik</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="update-nmr_tlp">Nomor Telpon</label>
-                                    <input type="text" class="form-control" id="update-nmr_tlp" name="nmr_tlp"
-                                        value="<?php echo $row['nmr_tlp'] ?>" required>
+                                    <input type="text" class="form-control" id="update-nmr_tlp" name="nmr_tlp" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="update-alamat">Alamat</label>
                                     <textarea type="text" class="form-control" id="update-alamat" name="alamat"
-                                        value="<?php echo $row['alamat'] ?>" required></textarea>
+                                        required></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="update-lat">Latitude</label>
-                                    <input type="text" class="form-control" id="x" name="lat"
-                                        value="<?php echo $row['lat'] ?>" required>
+                                    <input type="text" class="form-control" id="lat" name="lat" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="update-lng">Longitude</label>
-                                    <input type="text" class="form-control" id="y" name="lng"
-                                        value="<?php echo $row['lng'] ?>" required>
+                                    <input type="text" class="form-control" id="lng" name="lng" required>
                                 </div>
                                 <div class="form-group">
                                     <div id="petaku" style="width: 100%; height: 200px"></div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Update</button>
+                                <div class="text-center py-4">
+                                    <button type="submit" class="btn btn-primary text-align-end"
+                                        name="edit">Update</button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -329,8 +338,113 @@ include '../koneksi.php';
             </div>
             <!-- End of Update Modal -->
 
-            <?php
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            <!-- Add Modal -->
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addModalLabel">Tambah Data</h5>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">x</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addForm" action="" method="POST">
+                                <input type="hidden" name="id" id="add-id">
+                                <div class="form-group">
+                                    <label for="add-nama">Nama Objek</label>
+                                    <input type="text" class="form-control" id="add-nama" name="nama" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add-kategori">Kategori</label>
+                                    <select class="form-control" id="add-kategori" name="kategori" required>
+                                        <option value="Rumah Sakit">Rumah Sakit</option>
+                                        <option value="Klinik">Klinik</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add-nmr_tlp">Nomor Telpon</label>
+                                    <input type="text" class="form-control" id="add-nmr_tlp" name="nmr_tlp" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add-alamat">Alamat</label>
+                                    <textarea type="text" class="form-control" id="add-alamat" name="alamat"
+                                        required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add-lat">Latitude</label>
+                                    <input type="text" class="form-control" id="lat" name="lat" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="add-lng">Longitude</label>
+                                    <input type="text" class="form-control" id="lng" name="lng" required>
+                                </div>
+                                <div class="form-group">
+                                    <div id="petaku" style="width: 100%; height: 200px"></div>
+                                </div>
+                                <div class="text-center py-4">
+                                    <button type="submit" class="btn btn-primary text-align-end"
+                                        name="tambah">Tambah</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Add Modal -->
+
+            <?php // handle add request
+            if (isset($_POST['tambah'])) {
+                $nama = $_POST['nama'];
+                $kategori = $_POST['kategori'];
+                $nmr_tlp = $_POST['nmr_tlp'];
+                $alamat = $_POST['alamat'];
+                $lat = $_POST['lat'];
+                $lng = $_POST['lng'];
+
+                $sql = "INSERT INTO sebaran_objek (nama, kategori, nmr_tlp, alamat, lat, lng) VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+
+                if ($stmt) {
+                    $stmt->bind_param("ssssdd", $nama, $kategori, $nmr_tlp, $alamat, $lat, $lng);
+
+                    if ($stmt->execute()) {
+                        echo "<script>
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: 'Data berhasil ditambahkan.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = 'objek.php';
+                                }
+                            });
+                        </script>";
+                    } else {
+                        echo "<script>
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: 'Data gagal ditambahkan.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        </script>";
+                    }
+                } else {
+                    echo "<script>
+                        Swal.fire({
+                            title: 'Gagal!',
+                            text: 'Gagal mempersiapkan statement.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    </script>";
+                }
+            }
+            // handle update request
+            if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit'])) {
                 $id = $_POST['id'];
                 $nama = $_POST['nama'];
                 $kategori = $_POST['kategori'];
@@ -354,7 +468,7 @@ include '../koneksi.php';
                                 confirmButtonText: 'OK'
                             }).then((result) => {
                                 if (result.isConfirmed) {
-                                    window.location.href = 'angka.php';
+                                    window.location.href = 'objek.php';
                                 }
                             });
                         </script>";
@@ -379,8 +493,51 @@ include '../koneksi.php';
                     </script>";
                 }
             }
-            ?>
 
+            // Handle Delete Request
+            if (isset($_GET['delete_id'])) {
+                $id = $_GET['delete_id'];
+
+                $sql = "DELETE FROM sebaran_objek WHERE id = ?";
+                $stmt = $conn->prepare($sql);
+
+                if ($stmt) {
+                    $stmt->bind_param("i", $id);
+
+                    if ($stmt->execute()) {
+                        echo "<script>
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: 'Data berhasil dihapus.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = 'objek.php';
+                                }
+                            });
+                        </script>";
+                    } else {
+                        echo "<script>
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: 'Data gagal dihapus.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        </script>";
+                    }
+                } else {
+                    echo "<script>
+                        Swal.fire({
+                            title: 'Gagal!',
+                            text: 'Gagal mempersiapkan statement.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    </script>";
+                }
+            } ?>
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
@@ -441,10 +598,24 @@ include '../koneksi.php';
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
     <script>
-        // modal update
         $(document).ready(function () {
-            var table = $('#dataTable').DataTable();
-
+            // Hancurkan DataTable sebelum menginisialisasi kembali
+            if ($.fn.DataTable.isDataTable('#dataTable')) {
+                $('#dataTable').DataTable().destroy();
+            }
+            var table = $('#dataTable').DataTable({
+                columnDefs: [
+                    { width: '5%', targets: 0 },
+                    { width: '8%', targets: 1 },
+                    { width: '10%', targets: 2 },
+                    { width: '10%', targets: 3 },
+                    { width: '15%', targets: 4 },
+                    { width: '10%', targets: 5 },
+                    { width: '10%', targets: 6 },
+                    { width: '10%', targets: 7 },
+                ]
+            });
+            // modal update
             function bindEditButtons() {
                 $(".edit-btn").on("click", function () {
                     var id = $(this).data("id");
@@ -452,23 +623,29 @@ include '../koneksi.php';
                     var kategori = $(this).data("kategori");
                     var nmr_tlp = $(this).data("nmr_tlp");
                     var alamat = $(this).data("alamat");
-                    var x = $(this).data("x");
-                    var y = $(this).data("y");
+                    var lat = $(this).data("lat");
+                    var lng = $(this).data("lng");
 
                     $("#update-id").val(id);
                     $("#update-nama").val(nama);
                     $("#update-kategori").val(kategori);
                     $("#update-nmr_tlp").val(nmr_tlp);
                     $("#update-alamat").val(alamat);
-                    $("#update-x").val(x);
-                    $("#update-y").val(y);
+                    $("#lat").val(lat);
+                    $("#lng").val(lng);
 
                     $("#updateModal").modal("show");
+                });
+            }
+            function bindAddButtons() {
+                $(".add-btn").on("click", function () {
+                    $("#addModal").modal("show");
                 });
             }
 
             // Bind edit buttons on initial load
             bindEditButtons();
+            bindAddButtons();
 
             // Re-bind edit buttons on table draw (pagination, search, etc.)
             table.on('draw', function () {

@@ -32,6 +32,10 @@ include '../koneksi.php';
     <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
 
     <link rel="shortcut icon" href="../images/reelicon.png" type="image/x-icon" />
+
+    <!-- org chart -->
+    <script src="../js/orgchart.js"></script>
+    <!-- <script src="https://balkan.app/js/familytree.js"></script> -->
 </head>
 
 <body id="page-top">
@@ -173,8 +177,8 @@ include '../koneksi.php';
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Struktur Organisasi</h1>
                     </div>
-
-
+                    <div>test</div>
+                    <div style="width: 100%; height: 100%" id="tree" class=""></div>
                 </div>
             </div>
             <!-- End of Main Content -->
@@ -232,12 +236,8 @@ include '../koneksi.php';
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+    <!-- data struktur -->
+    <script src="../js/data.php"></script>
 </body>
 
 </html>
