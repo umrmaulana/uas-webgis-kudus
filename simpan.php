@@ -1,12 +1,14 @@
 <?php
 include 'koneksi.php';
-if (isset($_POST)) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nama = $_POST['nama'];
     $email = $_POST['email'];
     $tlp = $_POST['tlp'];
     $pesan = $_POST['pesan'];
-    $simpan = "insert into pesan (nama, email, tlp, pesan) values ('$nama', '$email', '$tlp', '$pesan')";
-    $result = mysqli_query($conn, $simpan);
+    $stmt = $conn->prepare("INSERT INTO pesan (nama, email, tlp, pesan) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $nama, $email, $tlp, $pesan);
+    $stmt->execute();
+    $stmt->close();
 }
 ?>
 <!DOCTYPE html>
@@ -23,7 +25,7 @@ if (isset($_POST)) {
     <meta name="description" content="" />
     <meta name="author" content="" />
 
-    <title>Dinas Sosial Kabupaten Kudus</title>
+    <title>Dinas Kesehatan Kabupaten Kudus</title>
 
     <!-- bootstrap core css -->
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
@@ -60,11 +62,11 @@ if (isset($_POST)) {
                     <div class="contact_nav">
                         <a href="">
                             <i class="fa fa-phone" aria-hidden="true"></i>
-                            <span> Telpon : 0811-6346-767 </span>
+                            <span> Telpon : (0291) 438-152 </span>
                         </a>
                         <a href="">
                             <i class="fa fa-envelope" aria-hidden="true"></i>
-                            <span> Email : dinsosp3ap2kb.kudus@kuduskab.com </span>
+                            <span> Email : dinkes@kuduskab.go.id </span>
                         </a>
                     </div>
                 </div>
@@ -86,25 +88,20 @@ if (isset($_POST)) {
                             <div class="d-flex mr-auto flex-column flex-lg-row align-items-center">
                                 <ul class="navbar-nav">
                                     <li class="nav-item active">
-                                        <a class="nav-link" href="index.html">Home <span
+                                        <a class="nav-link" href="index.php">Home <span
                                                 class="sr-only">(current)</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="profil.html">Profil </a>
+                                        <a class="nav-link" href="profil.php">Profil </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="">Peta </a>
-                                        <div class="dropdown">
-                                            <a class="dropdown-item" href="peta.html">Peta </a>
-                                            <a class="dropdown-item" href="/edit/tabel.php">Data
-                                            </a>
-                                        </div>
+                                        <a class="nav-link" href="peta.php">Peta </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="berita.html">Berita </a>
+                                        <a class="nav-link" href="berita.php">Berita </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="kontak.html">Kontak </a>
+                                        <a class="nav-link" href="kontak.php">Kontak </a>
                                     </li>
                                 </ul>
                             </div>
@@ -128,7 +125,7 @@ if (isset($_POST)) {
                         </p>
                         <p>lanjut menjelajahi?</p>
                         <div class="button">
-                            <a href="kontak.html">ok</a>
+                            <a href="kontak.php">ok</a>
                         </div>
                     </form>
                 </div>
@@ -147,26 +144,26 @@ if (isset($_POST)) {
                         <div class="info_contact">
                             <a href="">
                                 <i class="fa fa-map-marker" aria-hidden="true"></i>
-                                <span> Jl. Mejobo No. 99 Kabupaten Kudus, 59319 </span>
+                                <span> Jl. Diponegoro No. 15 Kabupaten Kudus, 59312 </span>
                             </a>
                             <a href="">
                                 <i class="fa fa-phone" aria-hidden="true"></i>
-                                <span> Call 0811-6346-767 </span>
+                                <span> Call (0291) 438-152 </span>
                             </a>
                             <a href="">
                                 <i class="fa fa-envelope"></i>
-                                <span> dinsosp3ap2kb.kudus@kuduskab.com </span>
+                                <span> dinkes@kuduskab.go.id </span>
                             </a>
                         </div>
                         <div class="social_box">
-                            <a href="https://www.facebook.com/dinassosialp3ap2kb" target="_blank">
-                                <i class="fa fa-facebook" aria-hidden="true"></i>
+                            <a href="https://www.facebook.com/dinkes.kabkudus" target="_blank">
+                                <i class="fa fa-facebook col-6" aria-hidden="true"></i>
                             </a>
-                            <a href="https://x.com/dinsoskudus" target="_blank">
-                                <i class="fa fa-twitter" aria-hidden="true"></i>
+                            <a href="https://www.youtube.com/@DIKTVchannel" target="_blank">
+                                <i class="fa fa-youtube col-6" aria-hidden="true"></i>
                             </a>
-                            <a href="https://www.instagram.com/dinsoskudus/" target="_blank">
-                                <i class="fa fa-instagram" aria-hidden="true"></i>
+                            <a href="https://www.instagram.com/dinkeskabkudus" target="_blank">
+                                <i class="fa fa-instagram col-6" aria-hidden="true"></i>
                             </a>
                         </div>
                     </div>
@@ -174,16 +171,16 @@ if (isset($_POST)) {
                         <div class="info_post">
                             <h5>Jam Pelayanan</h5>
                             <div class="info_contact">
-                                <a href=""><span>Senin - Kamis : 07.00 - 15.00</span></a>
-                                <a href=""><span>Jumat : 07.00 - 11.00</span></a>
+                                <a href=""><span>Senin - Kamis : 07.00 - 15.15</span></a>
+                                <a href=""><span>Jumat : 07.00 - 11.15</span></a>
                                 <a href=""><span>Sabtu - Minggu : Libur</span></a>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4">
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d83395.18811113582!2d110.85115900053977!3d-6.826511814711959!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e70c52013f77e07%3A0xf1b69e7eb0accc44!2sDinas%20Sosial%20P3AP2KB%20Kabupaten%20Kudus!5e0!3m2!1sid!2sus!4v1716984577446!5m2!1sid!2sus"
-                            width="350" height="250" style="border: 0" allowfullscreen="" loading="lazy"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.718205201796!2d110.84662787584232!3d-6.804094593193331!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e70c4d0aa8a368d%3A0xbe887578cf387f2e!2sDinas%20Kesehatan%20Kabupaten%20Kudus!5e0!3m2!1sid!2sid!4v1719392857114!5m2!1sid!2sid"
+                            width="300" height="200" style="border:0;" allowfullscreen="" loading="lazy"
                             referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                 </div>
@@ -197,11 +194,12 @@ if (isset($_POST)) {
         <div class="container">
             <p>
                 &copy; <span id="displayYear"></span> Powered By
-                <a href="https://html.design/">Umar Maulana</a>
+                <a href="https://server.umrmaulana.my.id/">Umar Maulana</a>
             </p>
         </div>
     </footer>
     <!-- footer section -->
+
     <!-- jQery -->
     <script src="js/jquery-3.4.1.min.js"></script>
     <!-- bootstrap js -->

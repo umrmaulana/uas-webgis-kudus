@@ -5,10 +5,8 @@ $primary2: #252525;
 $textCol: #999;
 
 @mixin main-font {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
-
-
 
 @mixin hero_btn($col1, $col2, $pad1, $pad2, $bRadius) {
   display: inline-block;
@@ -26,8 +24,6 @@ $textCol: #999;
   text-transform: uppercase;
   font-weight: bold;
 }
-
-
 
 body {
   @include main-font;
@@ -138,12 +134,8 @@ a:focus {
       padding-right: 25px;
       padding-left: 25px;
     }
-
   }
-
 }
-
-
 
 .navbar-brand {
   background-color: $white;
@@ -176,8 +168,6 @@ a:focus {
   }
 }
 
-
-
 .custom_nav-container .nav_search-btn {
   width: 35px;
   height: 35px;
@@ -190,8 +180,6 @@ a:focus {
   }
 }
 
-
-
 .custom_nav-container .navbar-toggler {
   outline: none;
 }
@@ -200,7 +188,7 @@ a:focus {
   padding: 0;
   width: 37px;
   height: 42px;
-  transition: all .3s;
+  transition: all 0.3s;
 
   span {
     display: block;
@@ -211,7 +199,7 @@ a:focus {
     transition: all 0.3s;
     position: relative;
     border-radius: 5px;
-    transition: all .3s;
+    transition: all 0.3s;
 
     &::before,
     &::after {
@@ -223,7 +211,7 @@ a:focus {
       background-color: $white;
       top: -10px;
       border-radius: 5px;
-      transition: all .3s;
+      transition: all 0.3s;
     }
 
     &::after {
@@ -262,7 +250,6 @@ a:focus {
   }
 
   &[aria-expanded="false"] {
-
     .s-1,
     .s-2,
     .s-3 {
@@ -297,7 +284,7 @@ a:focus {
   flex: 1;
   display: flex;
   align-items: center;
-  box-shadow: 0 5px 15px 0 rgba($color: #000000, $alpha: .1);
+  box-shadow: 0 5px 15px 0 rgba($color: #000000, $alpha: 0.1);
   padding-top: 45px;
   padding-bottom: 75px;
 
@@ -367,8 +354,6 @@ a:focus {
       z-index: 2;
       animation: before-animation 1500ms infinite;
     }
-
-
   }
 
   @keyframes before-animation {
@@ -381,10 +366,7 @@ a:focus {
       transform: translateX(-50%) translateY(-50%) translateZ(0) scale(1.4);
       opacity: 0;
     }
-
   }
-
-
 
   .detail-box {
     color: $primary2;
@@ -398,7 +380,6 @@ a:focus {
       span {
         color: $primary1;
       }
-
     }
 
     p {
@@ -445,11 +426,9 @@ a:focus {
       }
     }
   }
-
 }
 
 // end slider section
-
 
 // book section
 
@@ -477,7 +456,7 @@ a:focus {
 
   form {
     padding: 35px 45px;
-    box-shadow: 0 0 15px 10px rgba($color: #000000, $alpha: .07);
+    box-shadow: 0 0 15px 10px rgba($color: #000000, $alpha: 0.07);
 
     label {
       color: $black;
@@ -539,23 +518,19 @@ a:focus {
       top: 7px;
       font-size: 20px;
       font-weight: bold;
-      transition: all .3s;
+      transition: all 0.3s;
     }
 
     &.open:after {
       content: "\f106";
     }
   }
-
 }
 
 // end book section
 
-
-
 // about section
 .about_section {
-
   .row {
     align-items: center;
   }
@@ -580,7 +555,6 @@ a:focus {
 }
 
 // end about section
-
 
 // treatment section
 
@@ -623,7 +597,8 @@ a:focus {
         font-weight: bold;
       }
 
-      p {}
+      p {
+      }
 
       a {
         text-transform: uppercase;
@@ -634,13 +609,10 @@ a:focus {
         }
       }
     }
-
-
   }
 }
 
 // end treatment section
-
 
 // team section
 
@@ -743,13 +715,10 @@ a:focus {
         right: -25px;
       }
     }
-
   }
 }
 
 // end team section
-
-
 
 // client section
 
@@ -765,7 +734,7 @@ a:focus {
 
   .box {
     margin: 15px 45px;
-    box-shadow: 0 0 5px 0 rgba($color: #000000, $alpha: .25);
+    box-shadow: 0 0 5px 0 rgba($color: #000000, $alpha: 0.25);
     padding: 25px;
 
     .client_info {
@@ -815,7 +784,6 @@ a:focus {
   .carousel-control-next {
     right: 0;
   }
-
 }
 
 // end client section
@@ -831,7 +799,6 @@ a:focus {
       text-transform: uppercase;
     }
   }
-
 
   .form_container {
     margin-right: 45px;
@@ -868,12 +835,9 @@ a:focus {
       width: 100%;
     }
   }
-
 }
 
 // end contact section
-
-
 
 // info section
 .info_section {
@@ -1058,6 +1022,5 @@ a:focus {
     }
   }
 }
-
 
 // end footer section
