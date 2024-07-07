@@ -110,7 +110,7 @@ include 'koneksi.php';
         <div class="col-lg-7">
           <h2><?php echo $row['judul']; ?></h2>
           <p><?php echo $row['created_at']; ?></p>
-          <p><?php echo substr($row['desc'], 0, 200) . "..."; ?></p>
+          <p><?php echo substr($row['description'], 0, 200) . "..."; ?></p>
           <a href="">selengkapnya &raquo;</a>
         </div>
       </div>

@@ -101,6 +101,63 @@ include 'koneksi.php';
     <!-- end header section -->
   </div>
 
+  <!-- profile section -->
+  <section class="about_section layout_padding2">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="detail-box text-justify">
+            <div class="heading_container mb-2">
+              <h2>Kabupaten <span>Kudus</span></h2>
+            </div>
+            <p>Kabupaten Kudus adalah sebuah kabupaten di Provinsi Jawa Tengah, yang
+              terletak di jalur pantai timur laut Jawa Tengah antara Kota Semarang dan Kota
+              Surabaya. Kota ini berjarak 51 kilometer dari timur Kota Semarang.
+              Kudus dikenal sebagai kota penghasil rokok (kretek) terbesar di Jawa Tengah
+              dan juga dikenal sebagai kota santri. Kota ini adalah pusat perkembangan agama
+              Islam pada abad pertengahan. Hal ini dapat dilihat dari adanya 2 makam wali/sunan,
+              yaitu Sunan Kudus dan Sunan Muria.
+            </p>
+            <p>
+              Batas wilayah Kabupaten Kudus meliputi :
+            </p>
+            <ul>
+              <li>
+                <p>Utara : Kabupaten Jepara</p>
+              </li>
+              <li>
+                <p>Timur : Kabupaten Pati</p>
+              </li>
+              <li>
+                <p> Selatan : Kabupaten Gerobogan dan Kabupaten Demak</sp>
+              </li>
+              <li>
+                <p>
+                  Barat : Kabupaten Demak</p>
+              </li>
+            </ul>
+            <p>
+              Kabupaten Kudus terdiri dari 9 kecamatan, 9 kelurahan, dan 123 desa. Pusat
+              pemerintahan berada di Kecamatan Kota Kudus. Sebagian besar wilayah Kabupaten
+              Kudus adalah dataran rendah. Di sebagian wilayah utara terdapat pegunungan yaitu
+              Gunung Muria, dengan Puncak Saptorenggo (1.602 m dpl), Puncak Rahtawu (1.522
+              m dpl), dan Puncak Argojembang (1.410 m dpl). Sungai terbesar adalah Sungai
+              Serang yang mengalir di sebelah barat, membatasi Kabupaten Kudus dengan
+              Kabupaten Demak. Kudus dibelah oleh Sungai Gelis di bagian tengah sehingga
+              terdapat istilah Kudus Barat dan Kudus Timur.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="img-box d-flex justify-content-end">
+            <img src="images/kab-kudus.jpg" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- end profile section -->
+
   <!-- about section -->
   <section class="about_section">
     <div class="container">

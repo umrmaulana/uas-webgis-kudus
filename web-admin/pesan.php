@@ -218,7 +218,7 @@ include '../koneksi.php';
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Pesan Dari Website</h1>
                     </div>
-                    <div class="row py-2">
+                    <div class="row mb-4 d-sm-wrap align-items-center justify-content-center">
                         <?php $hasil = "select * from pesan";
                         foreach ($conn->query($hasil) as $row):
                             $date = new DateTime($row['created_at']);

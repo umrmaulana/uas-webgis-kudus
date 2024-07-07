@@ -1,3 +1,4 @@
+<?php include 'koneksi.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -101,6 +102,7 @@
     </header>
     <!-- end header section -->
   </div>
+  <!-- map section -->
   <section class="map_section layout_padding2">
     <div class="heading_container heading_center">
       <h2>Jumlah Kasus HIV/AIDS <span>Januari-April 2024</span></h2>
@@ -109,7 +111,13 @@
       <div id="map">
       </div>
     </div>
+    <div class="container bg-white d-flex justify-content-center py-4">
+      <div class="btn btn-primary mx-4"><a href="objek.php" class="text-white">Tabel Fasilitas Kesehatan</a></div>
+      <div class="btn btn-primary mx-4"><a href="angka.php" class="text-white">Tabel kasus
+          HIV/AIDS</a></div>
+    </div>
   </section>
+  <!-- end maps section -->
 
   <!-- info section -->
   <section class="info_section">
@@ -188,6 +196,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
   <!-- datepicker -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+  <!-- Page level plugins -->
+  <script src="web-admin/vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="web-admin/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+  <!-- Page level custom scripts -->
+  <script src="web-admin/js/demo/datatables-demo.js"></script>
   <!-- custom js -->
   <script src="qgis/js/qgis2web_expressions.js"></script>
   <script src="qgis/js/leaflet.js"></script>
@@ -252,7 +265,7 @@
     }
 
     function style_KabupatenKudus_0_0(feature) {
-      if (feature.properties['Jumlah-Kasus-HIV/AIDS'] >= 2.000000 && feature.properties['Jumlah-Kasus-HIV/AIDS'] <= 2.000000) {
+      if (feature.properties['Jumlah-Kasus-HIV/AIDS'] <= 2.000000) {
         return {
           pane: 'pane_KabupatenKudus_0',
           opacity: 1,
@@ -282,7 +295,7 @@
           interactive: true,
         }
       }
-      if (feature.properties['Jumlah-Kasus-HIV/AIDS'] >= 4.000000 && feature.properties['Jumlah-Kasus-HIV/AIDS'] <= 5.000000) {
+      if (feature.properties['Jumlah-Kasus-HIV/AIDS'] >= 4.000000) {
         return {
           pane: 'pane_KabupatenKudus_0',
           opacity: 1,
@@ -398,7 +411,7 @@
     var baseMaps = {};
     var overlaysTree = [
       { label: 'Fasilitas Kesehatan<br /><table><tr><td style="text-align: center;"><img src="images/klinik.png" style="width:25px;"/></td><td>Klinik</td></tr><tr><td style="text-align: center;"><img src="images/rs.png" style="width:25px;" /></td><td>Rumah Sakit</td></tr></table>', layer: layer_objek_1 },
-      { label: 'Kasus HIV/AIDS<br /><table><tr><td style="text-align: center;"><img src="qgis/legend/KabupatenKudus_0_20.png" /></td><td>2 Kasus</td></tr><tr><td style="text-align: center;"><img src="qgis/legend/KabupatenKudus_0_41.png" /></td><td>4  Kasus</td></tr><tr><td style="text-align: center;"><img src="qgis/legend/KabupatenKudus_0_52.png" /></td><td>5  Kasus</td></tr></table>', layer: layer_KabupatenKudus_0 },]
+      { label: 'Kasus HIV/AIDS<br /><table><tr><td style="text-align: center;"><img src="qgis/legend/KabupatenKudus_0_20.png" /></td><td>< 2 Kasus</td></tr><tr><td style="text-align: center;"><img src="qgis/legend/KabupatenKudus_0_41.png" /></td><td>3 - 4 Kasus</td></tr><tr><td style="text-align: center;"><img src="qgis/legend/KabupatenKudus_0_52.png" /></td><td>> 5  Kasus</td></tr></table>', layer: layer_KabupatenKudus_0 },]
     var lay = L.control.layers.tree(null, overlaysTree, {
       //namedToggle: true,
       //selectorBack: false,

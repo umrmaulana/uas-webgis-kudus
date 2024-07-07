@@ -190,6 +190,7 @@ include '../koneksi.php';
                                             <th>No</th>
                                             <th>Nama Layanan</th>
                                             <th>Jenis Layanan</th>
+                                            <th>Link Akses</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -203,10 +204,12 @@ include '../koneksi.php';
                                                 <td><?php echo $row['nama']; ?>
                                                 </td>
                                                 <td><?php echo $row['jenis']; ?></td>
+                                                <td><?php echo $row['link']; ?></td>
                                                 <td>
                                                     <a href="#" class="edit-btn" data-id="<?php echo $row['id']; ?>"
                                                         data-nama="<?php echo $row['nama']; ?>"
-                                                        data-jenis="<?php echo $row['jenis']; ?>">
+                                                        data-jenis="<?php echo $row['jenis']; ?>"
+                                                        data-link="<?php echo $row['link']; ?>">
                                                         <li class="fa fa-solid fa-pen"></li>
                                                         <span>edit</span>
                                                     </a> |
@@ -246,6 +249,10 @@ include '../koneksi.php';
                                             <input type="text" class="form-control" id="add-jenis" name="jenis"
                                                 required>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="add-link">Link</label>
+                                            <input type="text" class="form-control" id="add-link" name="link" required>
+                                        </div>
                                         <div class="text-center py-4">
                                             <button type="submit" class="btn btn-primary text-align-end"
                                                 name="tambah">Tambah</button>
@@ -281,6 +288,11 @@ include '../koneksi.php';
                                             <input type="text" class="form-control" id="update-jenis" name="jenis"
                                                 required>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="update-link">Link</label>
+                                            <input type="text" class="form-control" id="update-link" name="link"
+                                                required>
+                                        </div>
                                         <div class="text-center py-4">
                                             <button type="submit" class="btn btn-primary text-align-end">Update</button>
                                         </div>
@@ -296,12 +308,13 @@ include '../koneksi.php';
                     if (isset($_POST['tambah'])) {
                         $nama = $_POST['nama'];
                         $jenis = $_POST['jenis'];
+                        $link = $_POST['link'];
 
-                        $sql = "INSERT INTO layanan (nama, jenis) VALUES (?, ?)";
+                        $sql = "INSERT INTO layanan (nama, jenis, link) VALUES (?, ?, ?)";
                         $stmt = $conn->prepare($sql);
 
                         if ($stmt) {
-                            $stmt->bind_param("ss", $nama, $jenis);
+                            $stmt->bind_param("sss", $nama, $jenis, $link);
 
                             if ($stmt->execute()) {
                                 echo "<script>
@@ -342,12 +355,13 @@ include '../koneksi.php';
                         $id = $_POST['id'];
                         $nama = $_POST['nama'];
                         $jenis = $_POST['jenis'];
+                        $link = $_POST['link'];
 
-                        $sql = "UPDATE layanan SET nama = ?, jenis = ? WHERE id = ?";
+                        $sql = "UPDATE layanan SET nama = ?, jenis = ?, link = ? WHERE id = ?";
                         $stmt = $conn->prepare($sql);
 
                         if ($stmt) {
-                            $stmt->bind_param("ssi", $nama, $jenis, $id);
+                            $stmt->bind_param("sssi", $nama, $jenis, $link, $id);
                             if ($stmt->execute()) {
                                 echo "<script>
                                     Swal.fire({
@@ -498,10 +512,12 @@ include '../koneksi.php';
                 var id = $(this).data("id");
                 var nama = $(this).data("nama");
                 var jenis = $(this).data("jenis");
+                var link = $(this).data("link");
 
                 $("#update-id").val(id);
                 $("#update-nama").val(nama);
                 $("#update-jenis").val(jenis);
+                $("#update-link").val(link);
 
                 $("#updateModal").modal("show");
             });

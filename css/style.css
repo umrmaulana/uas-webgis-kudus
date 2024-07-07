@@ -570,7 +570,6 @@ a:focus {
     color-stop(10%, #ffffff)
   );
   background: linear-gradient(to bottom, transparent 10%, #ffffff 10%);
-  height: 35rem;
 }
 
 .team_section .box .img-box img {

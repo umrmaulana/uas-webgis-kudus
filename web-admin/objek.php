@@ -53,6 +53,7 @@ include '../koneksi.php';
         };
         function initialize() {
             map = new google.maps.Map(document.getElementById("petaku"), mapProp);
+            addmap = new google.maps.Map(document.getElementById("addmap"), mapProp);
             google.maps.event.addListener(map, 'click', function (event) {
                 if (awal == 0) {
                     placeMarker(event.latLng);
@@ -62,15 +63,34 @@ include '../koneksi.php';
                 awal = 1;
                 setLatLng(event.latLng);
             });
+            google.maps.event.addListener(addmap, 'click', function (event) {
+                if (awal == 0) {
+                    addplaceMarker(event.latLng);
+                } else {
+                    changeMarker(event.latLng);
+                }
+                awal = 1;
+                addLatLng(event.latLng);
+            });
         }
         function setLatLng(lokasi) {
             $("#lat").val(lokasi.lat());
             $("#lng").val(lokasi.lng());
         }
+        function addLatLng(lokasi) {
+            $("#addlat").val(lokasi.lat());
+            $("#addlng").val(lokasi.lng());
+        }
         function placeMarker(location) {
             marker = new google.maps.Marker({
                 position: location,
                 map: map,
+            });
+        }
+        function addplaceMarker(location) {
+            marker = new google.maps.Marker({
+                position: location,
+                map: addmap,
             });
         }
         function changeMarker(location) {
@@ -79,7 +99,7 @@ include '../koneksi.php';
     </script>
 </head>
 
-<body id="page-top" onload="initialize()">
+<body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
@@ -264,8 +284,7 @@ include '../koneksi.php';
                                                         <li class="fa fa-solid fa-pen"></li>
                                                         <span>Edit</span>
                                                     </a> |
-                                                    <a href="?delete_id=<?php echo $row['id']; ?>"
-                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                                    <a href="#" class="delete-link" data-id="<?php echo $row['id']; ?>">
                                                         <li class="fa fa-solid fa-trash"></li><span>Hapus</span>
                                                     </a>
                                                 </td>
@@ -374,14 +393,14 @@ include '../koneksi.php';
                                 </div>
                                 <div class="form-group">
                                     <label for="add-lat">Latitude</label>
-                                    <input type="text" class="form-control" id="lat" name="lat" required>
+                                    <input type="text" class="form-control" id="addlat" name="lat" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="add-lng">Longitude</label>
-                                    <input type="text" class="form-control" id="lng" name="lng" required>
+                                    <input type="text" class="form-control" id="addlng" name="lng" required>
                                 </div>
                                 <div class="form-group">
-                                    <div id="petaku" style="width: 100%; height: 200px"></div>
+                                    <div id="addmap" style="width: 100%; height: 200px"></div>
                                 </div>
                                 <div class="text-center py-4">
                                     <button type="submit" class="btn btn-primary text-align-end"
@@ -618,6 +637,7 @@ include '../koneksi.php';
             // modal update
             function bindEditButtons() {
                 $(".edit-btn").on("click", function () {
+                    initialize();
                     var id = $(this).data("id");
                     var nama = $(this).data("nama");
                     var kategori = $(this).data("kategori");
@@ -640,16 +660,37 @@ include '../koneksi.php';
             function bindAddButtons() {
                 $(".add-btn").on("click", function () {
                     $("#addModal").modal("show");
+                    initialize();
                 });
             }
-
+            function bindDelButtons() {
+                $(".delete-link").on("click", function (event) {
+                    event.preventDefault(); // Mencegah aksi default dari tautan
+                    var id = $(this).data("id"); // Mengambil id dari atribut data-id
+                    Swal.fire({
+                        title: "Apakah Anda yakin?",
+                        text: "Data akan dihapus permanen.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Ya, hapus!",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "?delete_id=" + id; // Mengarahkan ke URL dengan parameter delete_id
+                        }
+                    });
+                });
+            }
             // Bind edit buttons on initial load
             bindEditButtons();
             bindAddButtons();
+            bindDelButtons();
 
             // Re-bind edit buttons on table draw (pagination, search, etc.)
             table.on('draw', function () {
                 bindEditButtons();
+                bindDelButtons();
             });
         });
     </script>

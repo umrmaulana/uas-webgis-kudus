@@ -301,7 +301,7 @@ include '../koneksi.php';
                                         </div>
                                         <div class="form-group">
                                             <label for="foto">Choose file</label>
-                                            <input type="file" class="form-control" id="foto" name="foto">
+                                            <input type="file" class="form-control" id="update-foto" name="foto">
                                         </div>
                                         <div class="text-center py-4">
                                             <button type="submit" class="btn btn-primary text-align-end"
@@ -396,6 +396,17 @@ include '../koneksi.php';
                                 }
                             } else {
                                 echo "Invalid file type or size.";
+                            }
+                        } else {
+                            // Get the old photo URL from the database
+                            $sql = "SELECT foto FROM user WHERE id = ?";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param('i', $id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            if ($result->num_rows > 0) {
+                                $row = $result->fetch_assoc();
+                                $foto = $row['foto'];
                             }
                         }
                         $sql = "UPDATE user SET nama = ?, email = ?, password = ?, foto = ? WHERE id = ?";

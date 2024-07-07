@@ -144,11 +144,11 @@ include 'koneksi.php';
         $hasil = "select * from layanan";
         foreach ($conn->query($hasil) as $row)
         : ?>
-          <div class="col-md-6">
-            <div class="card text-white bg-primary mb-3">
-              <div class="card-body">
-                <h5 class="card-title text-center"><?php echo $row['nama']; ?></h5>
-              </div>
+          <div class="col-md-6 ">
+            <div class="card">
+              <a class="card-body btn-primary" href="<?php echo $row['link']; ?>">
+                <h5 class="text-center"><?php echo $row['nama']; ?></h5>
+              </a>
             </div>
           </div>
         <?php endforeach; ?>
@@ -223,10 +223,10 @@ include 'koneksi.php';
       <div class="heading_container heading_center">
         <h2>Berita <span>Terbaru</span></h2>
       </div>
-      <div class="carousel-wrap row">
+      <div class="carousel-wrap">
         <div class="owl-carousel team_carousel">
           <?php
-          $hasil = "select * from berita";
+          $hasil = "select * from berita where view = 1";
           foreach ($conn->query($hasil) as $row)
           : ?>
             <div class="item">
@@ -237,7 +237,12 @@ include 'koneksi.php';
                 <div class="detail-box">
                   <h5><?php echo $row['judul']; ?></h5>
                   <p>
-                    <?php echo substr($row['desc'], 0, 120) . "..."; ?>
+                    <?php $text = $row['description'];
+                    if (strlen($text) > 150) {
+                      echo substr($text, 0, 150) . "...";
+                    } else {
+                      echo $text;
+                    } ?>
                   </p>
                   <a href="berita.php"></a>
                 </div>

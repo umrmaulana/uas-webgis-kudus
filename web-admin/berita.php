@@ -14,7 +14,7 @@ include '../koneksi.php';
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
+    <meta name="descriptionription" content="" />
     <meta name="author" content="" />
 
     <title>Admin - Dashboard</title>
@@ -32,6 +32,8 @@ include '../koneksi.php';
     <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
 
     <link rel="shortcut icon" href="../images/reelicon.png" type="image/x-icon" />
+    <!-- alert library -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body id="page-top">
@@ -173,8 +175,335 @@ include '../koneksi.php';
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Berita Kudus</h1>
                     </div>
+                    <!-- table -->
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <div class="text-right py-2">
+                                <a href="#" class="add-btn"><button class="btn btn-primary text-align-end">Tambah
+                                        Baru</button></a>
+                            </div>
+                            <div class="table-responsive">
+                                <table id="dataTable" class="table table-bordered table-hover">
+                                    <thead class="text-center">
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Judul</th>
+                                            <th>Deskripsi</th>
+                                            <th>Foto</th>
+                                            <th>View</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php $hasil = "select * from berita";
+                                        $no = 1;
+                                        foreach ($conn->query($hasil) as $row)
+                                        : ?>
+                                            <tr>
+                                                <td class="text-center"><?php echo $no++; ?></td>
+                                                <td><?php echo $row['judul']; ?>
+                                                </td>
+                                                <td> <?php
+                                                $text = $row['description'];
+                                                if (strlen($text) > 150) {
+                                                    echo substr($text, 0, 150) . "...";
+                                                } else {
+                                                    echo $text;
+                                                }
+                                                ?> </td>
+                                                <td class="text-center"><img src="<?php echo $row['foto']; ?>" alt=""
+                                                        style="width: 100px"></td>
+                                                <td class="text-center"><?php echo ($row['view'] == 1) ? 'Iya' : 'Tidak'; ?>
+                                                </td>
+                                                <td>
+                                                    <a href="#" class="edit-btn m-3" data-id="<?php echo $row['id']; ?>"
+                                                        data-judul="<?php echo $row['judul']; ?>"
+                                                        data-description="<?php echo $row['description']; ?>"
+                                                        data-view="<?php echo $row['view']; ?>">
+                                                        <li class="fa fa-solid fa-pen"></li>
+                                                        <span>edit</span>
+                                                    </a> |
+                                                    <a href="#" class="delete-link" data-id="<?php echo $row['id']; ?>">
+                                                        <li class="fa fa-solid fa-trash"></li><span>Hapus</span>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end table -->
 
+                    <!-- add Modal -->
+                    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addModalLabel">Tambah Data</h5>
+                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">x</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="addForm" action="" enctype="multipart/form-data" method="POST">
+                                        <input type="hidden" name="id" id="add-id">
+                                        <div class="form-group">
+                                            <label for="add-judul">Judul</label>
+                                            <input type="text" class="form-control" id="add-judul" name="judul"
+                                                required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="add-description">Deskripsi</label>
+                                            <input type="text" class="form-control" id="add-description"
+                                                name="description" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="foto">Choose file</label>
+                                            <input type="file" class="form-control" id="foto" name="foto">
+                                        </div>
+                                        <div class="form-checkbox">
+                                            <label for="add-view">
+                                                Tampil di Home
+                                            </label>
+                                            <input class="form-control" type="checkbox" value="1" id="1" name="view">
+                                        </div>
+                                        <div class="text-center py-4">
+                                            <button type="submit" class="btn btn-primary text-align-end"
+                                                name="tambah">Tambah</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of add Modal -->
 
+                    <!-- Update Modal -->
+                    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog"
+                        aria-labelledby="updateModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="updateModalLabel">Update Data</h5>
+                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">x</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="updateForm" enctype="multipart/form-data" action="" method="POST">
+                                        <input type="hidden" name="id" id="update-id">
+                                        <div class="form-group">
+                                            <label for="update-judul">Judul</label>
+                                            <input type="text" class="form-control" id="update-judul" name="judul"
+                                                required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="update-description">Deskripsi</label>
+                                            <input type="text" class="form-control" id="update-description"
+                                                name="description" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="foto">Choose file</label>
+                                            <input type="file" class="form-control" id="update-foto" name="foto">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="update-view">
+                                                Tampil di Home
+                                            </label>
+                                            <input class="form-control" type="checkbox" value="1" id="update-view"
+                                                name="view">
+                                        </div>
+                                        <div class="text-center py-4">
+                                            <button type="submit" class="btn btn-primary text-align-end"
+                                                name="update">Update</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End of Update Modal -->
+
+                    <?php
+                    //handle to add
+                    if (isset($_POST['tambah'])) {
+                        $judul = $_POST['judul'];
+                        $description = $_POST['description'];
+                        $created_at = date('Y-m-d H:i:s');
+                        $foto = '';
+                        $view = isset($_POST['view']) ? 1 : 0;
+
+                        if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+                            $targetDir = "../images/news/";
+                            $targetFile = $targetDir . basename($_FILES["foto"]["name"]);
+                            $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+
+                            $check = getimagesize($_FILES["foto"]["tmp_name"]);
+                            if ($check !== false && in_array($imageFileType, ["jpg", "jpeg", "png", "gif"]) && $_FILES["foto"]["size"] <= 500000) {
+                                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $targetFile)) {
+                                    $foto = $targetFile;
+                                } else {
+                                    echo "Sorry, there was an error uploading your file.";
+                                }
+                            } else {
+                                echo "Invalid file type or size.";
+                            }
+                        }
+
+                        $sql = "INSERT INTO berita (judul, description, foto, created_at, view) VALUES (?, ?, ?, ?, ?)";
+                        $stmt = $conn->prepare($sql);
+                        if ($stmt) {
+                            $stmt->bind_param('sssss', $judul, $description, $foto, $created_at, $view);
+                            if ($stmt->execute()) {
+                                echo '<script>
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Success",
+                                    text: "Data berhasil ditambahkan."
+                                }).then(function() {
+                                    window.location = "berita.php";
+                                });
+                            </script>';
+                            } else {
+                                echo "<script>
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: 'Data gagal ditambah.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            </script>";
+                            }
+                        } else {
+                            echo "<script>
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: 'Data gagal ditambah.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        </script>";
+                        }
+                    }
+                    // handle to updata
+                    if (isset($_POST['update'])) {
+                        $id = $_POST['id'];
+                        $judul = $_POST['judul'];
+                        $description = $_POST['description'];
+                        $foto = '';
+                        $view = isset($_POST['view']) ? 1 : 0;
+                        ;
+
+                        if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
+                            $targetDir = "../images/news/";
+                            $targetFile = $targetDir . basename($_FILES["foto"]["name"]);
+                            $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+
+                            $check = getimagesize($_FILES["foto"]["tmp_name"]);
+                            if ($check !== false && in_array($imageFileType, ["jpg", "jpeg", "png", "gif"]) && $_FILES["foto"]["size"] <= 500000) {
+                                if (move_uploaded_file($_FILES["foto"]["tmp_name"], $targetFile)) {
+                                    $foto = $targetFile;
+                                } else {
+                                    echo "Sorry, there was an error uploading your file.";
+                                }
+                            } else {
+                                echo "Invalid file type or size.";
+                            }
+                        } else {
+                            // Get the old photo URL from the database
+                            $sql = "SELECT foto FROM berita WHERE id = ?";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->bind_param('i', $id);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            if ($result->num_rows > 0) {
+                                $row = $result->fetch_assoc();
+                                $foto = $row['foto'];
+                            }
+                        }
+                        $sql = "UPDATE berita SET judul = ?, description = ?, foto = ?, view = ? WHERE id = ?";
+                        $stmt = $conn->prepare($sql);
+                        if ($stmt) {
+                            $stmt->bind_param('ssssi', $judul, $description, $foto, $view, $id);
+                            if ($stmt->execute()) {
+                                echo '<script>
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Success",
+                                    text: "Data berhasil ditambahkan."
+                                }).then(function() {
+                                    window.location = "berita.php";
+                                });
+                            </script>';
+                            } else {
+                                echo "<script>
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: 'Data gagal diupdate.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                              </script>";
+                            }
+                        } else {
+                            echo "<script>
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: 'Data gagal diupdate.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                          </script>";
+                        }
+                    }
+                    // handle to delete
+                    if (isset($_GET['delete_id'])) {
+                        $id = $_GET['delete_id'];
+
+                        $sql = "DELETE FROM berita WHERE id = ?";
+                        $stmt = $conn->prepare($sql);
+
+                        if ($stmt) {
+                            $stmt->bind_param("i", $id);
+
+                            if ($stmt->execute()) {
+                                echo "<script>
+                                    Swal.fire({
+                                        title: 'Berhasil!',
+                                        text: 'Data berhasil dihapus.',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = 'berita.php';
+                                        }
+                                    });
+                                </script>";
+                            } else {
+                                echo "<script>
+                                    Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Data gagal dihapus.',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK'
+                                    });
+                                </script>";
+                            }
+                        } else {
+                            echo "<script>
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: 'Gagal mempersiapkan statement.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            </script>";
+                        }
+                    }
+                    ?>
                 </div>
             </div>
             <!-- End of Main Content -->
@@ -233,7 +562,82 @@ include '../koneksi.php';
     <script src="js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="js/demo/datatables-demo.js"></script>
+
+    <!-- modal update -->
+    <script>
+        // Hancurkan DataTable sebelum menginisialisasi kembali
+        if ($.fn.DataTable.isDataTable('#dataTable')) {
+            $('#dataTable').DataTable().destroy();
+        }
+        var table = $('#dataTable').DataTable({
+            columnDefs: [
+                { width: '5%', targets: 0 },
+                { width: '20%', targets: 1 },
+                { width: '37%', targets: 2 },
+                { width: '15%', targets: 3 },
+                { width: '8%', targets: 4 },
+                { width: '15%', targets: 5 },
+            ]
+        });
+        $(document).ready(function () {
+            function bindEditButtons() {
+                $(".edit-btn").on("click", function () {
+                    var id = $(this).data("id");
+                    var judul = $(this).data("judul");
+                    var description = $(this).data("description");
+                    var view = $(this).data("view");
+                    if (view == "1") {
+                        $('#update-view').prop('checked', true);
+                    } else {
+                        $('#update-view').prop('checked', false);
+                    }
+                    $("#update-id").val(id);
+                    $("#update-judul").val(judul);
+                    $("#update-description").val(description);
+                    $("#update-view").val(view);
+
+                    $("#updateModal").modal("show");
+                });
+            }
+            function bindAddButtons() {
+                $(".add-btn").on("click", function () {
+                    $("#addModal").modal("show");
+                });
+            }
+            function bindDelButtons() {
+                $(".delete-link").on("click", function (event) {
+                    event.preventDefault(); // Mencegah aksi default dari tautan
+                    var id = $(this).data("id"); // Mengambil id dari atribut data-id
+
+                    Swal.fire({
+                        title: "Apakah Anda yakin?",
+                        text: "Data akan dihapus permanen.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Ya, hapus!",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = "?delete_id=" + id; // Mengarahkan ke URL dengan parameter delete_id
+                        }
+                    });
+                });
+            }
+            bindAddButtons();
+            bindEditButtons();
+            bindDelButtons();
+            table.on('draw', function () {
+                bindEditButtons();
+                bindDelButtons();
+            });
+        });
+    </script>
 
 </body>
 
